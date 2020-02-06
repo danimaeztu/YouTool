@@ -1,3 +1,5 @@
+CREATE DATABASE YouTool;
+USE YouTool;
 CREATE TABLE `Trending_videos` (
 	`video_id` CHAR(11) NOT NULL,
 	`title` VARCHAR(100) NOT NULL,
