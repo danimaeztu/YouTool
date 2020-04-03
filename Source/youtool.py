@@ -175,3 +175,10 @@ connection = engine.connect()
 # Insert data into MariaDB Server
 GLOBAL.to_sql('Trending_videos', con=connection, schema='YouTool',
               if_exists='append', index=False)
+
+# Print the result
+sql = """SELECT country, COUNT(country) AS cantidad FROM Trending_videos
+         WHERE trending_date = "{}"
+         GROUP BY country;""".format(time.strftime("%y.%d.%m"))
+result = pd.read_sql(sql, connection)
+print(result)
