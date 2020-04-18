@@ -2,11 +2,12 @@
 import requests
 import sys
 import time
+from pathlib import Path
 import urllib.request
 import json
+import sqlalchemy
 import pandas as pd
 import config as cf
-import sqlalchemy
 import pymysql  # Using virtual env this is the only way
 pymysql.install_as_MySQLdb()
 
@@ -113,7 +114,8 @@ def write_to_file(country_code, country_data):
     """Write data into CSV file"""
     print(f"Writing {country_code} data to file...")
 
-    with open(f"{cf.output_dir}/{time.strftime('%y.%d.%m')}_{country_code}_videos.csv", "w+", encoding='utf-8') as file:
+    with open(f"{ruta}/{time.strftime('%y.%d.%m')}_{country_code}_videos.csv",
+              "w+", encoding='utf-8') as file:
         for row in country_data:
             file.write(f"{row}\n")
 
@@ -143,18 +145,22 @@ def info_canal(datos,nombre):
     datos['subscriptions'] = subscriptions
     datos['NumeroVideosCanal'] = NumeroVideosCanal
 
-    datos.to_csv("{}/{}_{}_videos.csv".format(cf.output_dir, time.strftime('%y.%d.%m'),
+    datos.to_csv("{}/{}_{}_videos.csv".format(ruta, time.strftime('%y.%d.%m'),
                                               nombre), index=None, header=True)
     return(datos)
 
+
 # Main code
+ruta = f"{cf.output_dir}/{time.strftime('%Y')}/{time.strftime('%m')}"
+Path(ruta).mkdir(parents=True, exist_ok=True)  # Creates dir if it doesn't exists
+
 get_data()
 
 # Read data country by country
-US = pd.read_csv("{}/{}_US_videos.csv".format(cf.output_dir, time.strftime('%y.%d.%m')), engine='python', encoding='latin_1')
-GB = pd.read_csv("{}/{}_GB_videos.csv".format(cf.output_dir, time.strftime('%y.%d.%m')), engine='python', encoding='latin_1')
-CA = pd.read_csv("{}/{}_CA_videos.csv".format(cf.output_dir, time.strftime('%y.%d.%m')), engine='python', encoding='latin_1')
-ES = pd.read_csv("{}/{}_ES_videos.csv".format(cf.output_dir, time.strftime('%y.%d.%m')), engine='python', encoding='latin_1')
+US = pd.read_csv("{}/{}_US_videos.csv".format(ruta, time.strftime('%y.%d.%m')), engine='python', encoding='latin_1')
+GB = pd.read_csv("{}/{}_GB_videos.csv".format(ruta, time.strftime('%y.%d.%m')), engine='python', encoding='latin_1')
+CA = pd.read_csv("{}/{}_CA_videos.csv".format(ruta, time.strftime('%y.%d.%m')), engine='python', encoding='latin_1')
+ES = pd.read_csv("{}/{}_ES_videos.csv".format(ruta, time.strftime('%y.%d.%m')), engine='python', encoding='latin_1')
 
 # Append channel data
 US = info_canal(US,'US')
